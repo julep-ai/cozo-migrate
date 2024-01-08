@@ -13,6 +13,7 @@ from .fn import maybe_apply, format_ts
 def reject_nullish(x):
     return x is None or np.isnan(x)
 
+
 pretty_transforms = dict(
     created_at=lambda x: maybe_apply(format_ts, x, reject_if=reject_nullish) or "---",
     migrated_at=lambda x: maybe_apply(format_ts, x, reject_if=reject_nullish) or "---",

@@ -16,6 +16,7 @@ pycozo = {extras = ["embedded", "pandas", "requests"], version = "^0.7.6"}
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.11"
 ward = "^0.68.0b0"
+black = "^23.12.1"
 
 [tool.poetry.scripts]
 cozo-migrate = "cozo_migrate:cli"

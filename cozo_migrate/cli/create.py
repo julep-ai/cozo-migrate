@@ -1,5 +1,6 @@
 from datetime import datetime
 import re
+from typing_extensions import Annotated
 
 import typer
 
@@ -11,7 +12,21 @@ from .main import app
 
 
 @app.command()
-def create(id: str, ctx: typer.Context):
+def create(
+    id: Annotated[
+        str,
+        typer.Argument(
+            ...,
+            help="A short, descriptive, alphanumeric id for the migration. Only letters, numbers, and underscores are allowed.",
+        ),
+    ],
+    ctx: typer.Context,
+):
+    """
+    Create a new migration file in the migrations directory.
+    Format: {migration_dir}/migrate_<timestamp>_<id>.py
+    """
+
     migrations_dir = ctx.obj.migrations_dir
 
     # id can only contain letters, numbers, and underscores

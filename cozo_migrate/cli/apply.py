@@ -19,11 +19,16 @@ from .main import app
 def apply(
     ctx: typer.Context,
     steps: Annotated[int, typer.Argument()] = 1,
-    down: bool = False,
-    verbose: bool = False,
+    down: Annotated[bool, typer.Option("--down")] = False,
 ):
+    """
+    Apply migrations to the database.
+    You can specify the number of steps to apply and the direction.
+    """
+
     client = ctx.obj.client
     migrations_dir = ctx.obj.migrations_dir
+    verbose = ctx.obj.verbose
 
     if not schema_exists(client):
         fail("Schema does not exist. Run `init` first.")

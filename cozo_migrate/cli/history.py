@@ -11,6 +11,8 @@ from .main import app
 
 @app.command()
 def history(ctx: typer.Context):
+    """Display the migration history in the database as a pretty table."""
+
     client = ctx.obj.client
 
     if not schema_exists(client):

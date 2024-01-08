@@ -1,2 +1,2 @@
 # ruff: noqa
-from .app.main import app as cli
+from .cli.main import app as cli

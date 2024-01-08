@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
 from dataclasses import asdict, dataclass
+from enum import Enum
 from pathlib import Path
-from typing import Any, Literal, Optional, Protocol, TypedDict
+from typing import Any, Optional, Protocol, TypedDict
 
 import pandas as pd
 from pycozo.client import Client
@@ -10,7 +11,12 @@ from rich.table import Table
 
 from .utils.rich import dict_to_table, pretty_transforms
 
-EngineType = Literal["sqlite", "rocksdb", "http"]
+
+class EngineType(str, Enum):
+    sqlite = "sqlite"
+    rocksdb = "rocksdb"
+    http = "http"
+    mem = "mem"
 
 
 @dataclass
@@ -71,3 +77,4 @@ class AppContext:
     path: Path
     options: CozoConnectionOptions
     migrations_dir: Path
+    verbose: bool

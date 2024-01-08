@@ -11,6 +11,8 @@ from .main import app
 
 @app.command()
 def status(ctx: typer.Context):
+    """Display the current migration status."""
+
     client = ctx.obj.client
 
     if not schema_exists(client):

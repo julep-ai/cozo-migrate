@@ -8,6 +8,8 @@ from .main import app
 
 @app.command()
 def init(ctx: typer.Context):
+    """Initialize the database with the migration history table (under the name `migrations_manager`)."""
+
     client = ctx.obj.client
 
     if schema_exists(client):
