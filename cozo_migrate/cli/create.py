@@ -1,4 +1,3 @@
-from datetime import datetime
 import re
 from typing_extensions import Annotated
 
@@ -7,6 +6,7 @@ import typer
 from ..files import get_migration_files
 from ..template import migration_template
 from ..utils.console import fail, success
+from ..utils.datetime import utcnow
 
 from .main import app
 
@@ -42,7 +42,7 @@ def create(
         fail(f"A migration with id `{id}` already exists.")
 
     # Create the migration file
-    ts = datetime.utcnow().timestamp()
+    ts = utcnow().timestamp()
     path = migrations_dir / f"migrate_{int(ts)}_{id}.py"
 
     with open(path, "w") as f:

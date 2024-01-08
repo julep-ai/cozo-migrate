@@ -5,13 +5,6 @@ from typing_extensions import Annotated
 from pycozo.client import Client
 import typer
 
-from ..defaults import (
-    DEFAULT_ENGINE,
-    DEFAULT_HOST,
-    DEFAULT_AUTH,
-    DEFAULT_MIGRATIONS_DIR,
-    DEFAULT_VERBOSE,
-)
 from ..types import AppContext, CozoConnectionOptions, EngineType
 from ..utils.client import is_connected
 from ..utils.console import fail
@@ -28,22 +21,38 @@ def main(
             "--migrations-dir",
             "-m",
             help="Directory to use for looking up migration files.",
+            envvar="COZO_MIGRATIONS_DIR",
         ),
-    ] = DEFAULT_MIGRATIONS_DIR,
+    ] = "./migrations",
     engine: Annotated[
-        EngineType, typer.Option("--engine", "-e", help="Engine to use")
-    ] = DEFAULT_ENGINE,
+        EngineType,
+        typer.Option("--engine", "-e", help="Engine to use", envvar="COZO_ENGINE"),
+    ] = EngineType.sqlite,
     path: Annotated[
         Optional[Path],
-        typer.Option(help="Database file (not applicable for mem or http engines)"),
+        typer.Option(
+            "--path",
+            "-p",
+            help="Database file (not applicable for mem or http engines)",
+            envvar="COZO_PATH",
+        ),
     ] = None,
     host: Annotated[
-        str, typer.Option(help="Host to connect to (http engine only)")
-    ] = DEFAULT_HOST,
+        str,
+        typer.Option(
+            "--host",
+            "-h",
+            help="Host to connect to (http engine only)",
+            envvar="COZO_HOST",
+        ),
+    ] = "http://127.0.0.1:9070",
     auth: Annotated[
-        Optional[str], typer.Option(help="Auth header (http engine only)")
-    ] = DEFAULT_AUTH,
-    verbose: Annotated[bool, typer.Option("--verbose", "-v")] = DEFAULT_VERBOSE,
+        Optional[str],
+        typer.Option(
+            help="Auth header (http engine only)", envvar="COZO_AUTH", show_envvar=False
+        ),
+    ] = None,
+    verbose: Annotated[bool, typer.Option("--verbose", "-v")] = False,
 ):
     """
     A simple migration tool for Cozo databases.
@@ -52,7 +61,12 @@ def main(
     # Validate options
     if engine in (EngineType.sqlite, EngineType.rocksdb):
         if not path:
-            fail("`--path` is required for sqlite and rocksdb engines")
+            fail(
+                "`--path` is required for sqlite and rocksdb engines"
+                "\n\n"
+                "Example:\n"
+                "$ cozo-migrate --engine sqlite --path ./mydb.db [COMMAND] [OPTIONS]"
+            )
 
         path = path.resolve()
 
