@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cozo-migrate"
-version = "0.1.1"
+version = "0.1.2"
 description = "A simple utility for migrations for cozo db"
 authors = ["Diwank Singh Tomer <diwank.singh@gmail.com>"]
 license = "MIT"
