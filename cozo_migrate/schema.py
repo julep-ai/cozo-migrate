@@ -11,7 +11,7 @@ check_schema_query = """
 
 create_schema_query = """
 :create migrations_manager {
-    migrated_at: Validity default [floor(now()), true] =>
+    migrated_at_ms: Validity default [floor(now() * 1000), true] =>
     id: String?,
     previous_id: String?,
     created_at: Float?,

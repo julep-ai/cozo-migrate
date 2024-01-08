@@ -13,12 +13,12 @@ get_first_query = """
     previous_id,
     created_at,
 ] := *migrations_manager {
-        migrated_at: validity,
+        migrated_at_ms: validity,
         id,
         created_at,
         previous_id,
     },
-    migrated_at = to_int(validity),
+    migrated_at = to_int(validity) / 1000,
     previous_id = null
 """
 
@@ -29,12 +29,12 @@ get_latest_query = """
     previous_id,
     created_at,
 ] := *migrations_manager {
-        migrated_at: validity,
+        migrated_at_ms: validity,
         id,
         created_at,
         previous_id,
         @ "NOW"
-    }, migrated_at = to_int(validity)
+    }, migrated_at = to_int(validity) / 1000
 """
 
 get_history_query = """
@@ -44,11 +44,11 @@ get_history_query = """
     previous_id,
     created_at,
 ] := *migrations_manager {
-        migrated_at: validity,
+        migrated_at_ms: validity,
         id,
         created_at,
         previous_id,
-    }, migrated_at = to_int(validity)
+    }, migrated_at = to_int(validity) / 1000
 
 :sort migrated_at
 """

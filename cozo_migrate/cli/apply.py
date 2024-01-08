@@ -4,9 +4,9 @@ from typing_extensions import Annotated
 import typer
 
 from ..files import get_migration_files
-from ..history import get_latest_migration
 from ..modules import get_adjacent_migrations
 from ..ops import apply_migrations
+from ..queries import get_latest_migration
 from ..types import Migration, MigrationModule, MigrationModuleInfo
 from ..utils.console import fail, success, info
 

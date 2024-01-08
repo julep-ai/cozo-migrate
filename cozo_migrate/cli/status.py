@@ -1,7 +1,7 @@
 from rich import print
 import typer
 
-from ..history import get_latest_migration
+from ..queries import get_latest_migration
 from ..types import Migration
 from ..utils.console import fail
 

@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-import time
 from typing import Optional
 
 from pycozo.client import Client
-from rich.progress import track
 
 from .types import MigrationModule
 from .utils.console import fail, info, warn
@@ -25,16 +23,14 @@ def add_migration(
         },
     )
 
-    time.sleep(0.1)
-
 
 def apply(
     client: Client,
     migration1: MigrationModule,
     migration2: MigrationModule,
     down: bool = False,
-    verbose: bool = False,
-) -> None:
+) -> str:
+    """Apply a migration and return the operation name."""
     # Up: migration1 -> migration2 (run migration2.up)
     # Down: migration1 -> migration2 (run migration1.down)
     op = migration1.down if down else migration2.up
@@ -48,7 +44,6 @@ def apply(
     created_at = migration2.CREATED_AT
     assert id or previous_id, "Can't migrate from None to None"
 
-    verbose and info(f"Running `{op_name}`...")
     op(client)
 
     add_migration(
@@ -57,6 +52,8 @@ def apply(
         id=id,
         previous_id=previous_id,
     )
+
+    return op_name
 
 
 def apply_migrations(
@@ -69,10 +66,12 @@ def apply_migrations(
     currently_applied = []
     need_to_roll_back = False
     migration_error = None
+    success = False
 
-    for from_, to in track(paired(migrations), description="Migrating"):
+    for from_, to in paired(migrations):
         try:
-            apply(client, from_, to, down=down, verbose=verbose)
+            op_name = apply(client, from_, to, down=down)
+            verbose and info(f"Executed `{op_name}`.")
             currently_applied.append(from_)
         except Exception as e:
             if _rolling_back:
@@ -96,9 +95,11 @@ def apply_migrations(
             currently_applied[::-1],
             down=(not down),
             _rolling_back=True,
-            verbose=verbose,
+            verbose=True,
         )
 
-        return False
+        success = False
+    else:
+        success = True
 
-    return True
+    return success
