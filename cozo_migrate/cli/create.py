@@ -13,6 +13,7 @@ from .main import app
 
 @app.command()
 def create(
+    ctx: typer.Context,
     id: Annotated[
         str,
         typer.Argument(
@@ -20,7 +21,7 @@ def create(
             help="A short, descriptive, alphanumeric id for the migration. Only letters, numbers, and underscores are allowed.",
         ),
     ],
-    ctx: typer.Context,
+    confirm: Annotated[bool, typer.Option("--yes", "-y")] = False,
 ):
     """
     Create a new migration file in the migrations directory.
@@ -28,6 +29,9 @@ def create(
     """
 
     migrations_dir = ctx.obj.migrations_dir
+
+    # Create migrations_dir if it doesn't exist
+    migrations_dir.mkdir(parents=True, exist_ok=True)
 
     # id can only contain letters, numbers, and underscores
     # can only start with a lowercase letter
@@ -44,6 +48,12 @@ def create(
     # Create the migration file
     ts = utcnow().timestamp()
     path = migrations_dir / f"migrate_{int(ts)}_{id}.py"
+
+    # Confirm
+    if not confirm:
+        confirmed = typer.confirm(f"Writing '{path}' Confirm?")
+        if not confirmed:
+            raise typer.Abort()
 
     with open(path, "w") as f:
         f.write(migration_template.format(migration_id=id, created_at=ts))
