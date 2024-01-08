@@ -2,7 +2,6 @@
 
 from dataclasses import asdict, dataclass
 from enum import Enum
-from pathlib import Path
 from typing import Any, Optional, Protocol, TypedDict
 
 import pandas as pd
@@ -68,13 +67,3 @@ class MigrationModuleInfo:
 class CozoConnectionOptions(TypedDict):
     host: str
     auth: str
-
-
-@dataclass
-class AppContext:
-    client: Client
-    engine: EngineType
-    path: Path
-    options: CozoConnectionOptions
-    migrations_dir: Path
-    verbose: bool

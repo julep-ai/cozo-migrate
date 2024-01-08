@@ -1,7 +1,7 @@
 import typer
 
-from ..schema import schema_exists, create_schema
-from ..utils.console import fail, success, info
+from ..schema import create_schema, schema_exists
+from ..utils.console import success, info, fail
 
 from .main import app
 
@@ -9,6 +9,9 @@ from .main import app
 @app.command()
 def init(ctx: typer.Context):
     """Initialize the database with the migration history table (under the name `migrations_manager`)."""
+
+    # Validate client
+    ctx.obj.validate_options()
 
     client = ctx.obj.client
 
