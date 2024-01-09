@@ -1,3 +1,5 @@
+from typing import Optional
+
 from rich import print
 import typer
 
@@ -17,8 +19,9 @@ def status(ctx: typer.Context):
 
     client = ctx.obj.client
 
-    last_migration: Migration = get_latest_migration(client)
-    if not last_migration:
+    last_migration: Optional[Migration] = get_latest_migration(client)
+    if last_migration is None:
         fail("No migrations have been applied yet.")
 
-    print(last_migration.to_table())
+    else:
+        print(last_migration.to_table())

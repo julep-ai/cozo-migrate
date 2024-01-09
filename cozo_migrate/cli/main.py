@@ -21,7 +21,7 @@ def main(
             help="Directory to use for looking up migration files.",
             envvar="COZO_MIGRATIONS_DIR",
         ),
-    ] = "./migrations",
+    ] = Path("./migrations"),
     engine: Annotated[
         EngineType,
         typer.Option("--engine", "-e", help="Engine to use", envvar="COZO_ENGINE"),

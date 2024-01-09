@@ -2,6 +2,7 @@
 
 from typing import Optional
 
+import pandas as pd
 from pycozo.client import Client
 
 from .types import Migration
@@ -73,7 +74,7 @@ latest[id] := *migrations_manager { id @ "NOW" }
 """
 
 
-def get_history(client: Client) -> list[Migration]:
+def get_history(client: Client) -> pd.DataFrame:
     results = client.run(get_history_query)
     return results
 

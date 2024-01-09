@@ -2,7 +2,8 @@
 
 from dataclasses import asdict, dataclass
 from enum import Enum
-from typing import Any, Optional, Protocol, TypedDict
+from types import ModuleType
+from typing import Any, Optional, TypedDict
 
 import pandas as pd
 from pycozo.client import Client
@@ -44,7 +45,7 @@ class Migration:
         return items[0] if items else default
 
 
-class MigrationModule(Protocol):
+class MigrationModule(ModuleType):
     MIGRATION_ID: Optional[str]
     CREATED_AT: Optional[float]
 
@@ -66,4 +67,4 @@ class MigrationModuleInfo:
 
 class CozoConnectionOptions(TypedDict):
     host: str
-    auth: str
+    auth: Optional[str]

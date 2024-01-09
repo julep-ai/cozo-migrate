@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
 
-from . import cli
+from .cli.main import app as cli
 
 cli()

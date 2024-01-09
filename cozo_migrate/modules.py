@@ -11,7 +11,7 @@ from .types import MigrationModule, MigrationModuleInfo
 from .utils.fn import create_obj
 
 
-class NullMigrationModule:
+class NullMigrationModule(MigrationModule):
     MIGRATION_ID: Optional[str] = None
     CREATED_AT: Optional[float] = None
 
@@ -37,10 +37,15 @@ def import_migration_file(path: str | Path) -> MigrationModule:
     spec = importlib.util.spec_from_file_location(module_name, str(path))
     module: ModuleType = importlib.util.module_from_spec(spec)
 
+    if not (spec and module):
+        raise Exception(f"Could not import migration file: {path}")
+
     spec.loader.exec_module(module)
+
+    module = cast(MigrationModule, module)
     sanity_check(module)
 
-    return cast(MigrationModule, module)
+    return module
 
 
 def get_adjacent_migrations(
@@ -70,7 +75,7 @@ def get_adjacent_migrations(
     migrations: list[MigrationModule] = [
         import_migration_file(m_file.path)
         if m_file.id is not None
-        else NullMigrationModule()
+        else NullMigrationModule("", "")
         for m_file in migration_files[start:end]
     ]
 

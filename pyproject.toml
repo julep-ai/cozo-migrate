@@ -17,6 +17,8 @@ pycozo = {extras = ["embedded", "pandas", "requests"], version = "^0.7.6"}
 ruff = "^0.1.11"
 ward = "^0.68.0b0"
 black = "^23.12.1"
+pytype = "^2024.1.5"
+poethepoet = "^0.24.4"
 
 [tool.poetry.scripts]
 cozo-migrate = "cozo_migrate:cli"
@@ -24,3 +26,16 @@ cozo-migrate = "cozo_migrate:cli"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poe.poetry_hooks]
+pre_build = "check"
+
+[tool.poe.tasks]
+prettify = "black ."
+lint = "ruff **/*.py --fix --unsafe-fixes"
+typecheck = "pytype cozo_migrate"
+check = [
+    "prettify",
+    "lint",
+    "typecheck",
+]

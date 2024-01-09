@@ -51,7 +51,7 @@ class AppContext:
             self.path = self.path.resolve()
 
         if self.engine == EngineType.http:
-            if not self.host:
+            if not (self.options and self.options.get("host")):
                 fail("`--host / -h` is required for http engine")
 
     def check_client(self) -> None:
