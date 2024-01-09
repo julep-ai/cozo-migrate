@@ -39,3 +39,13 @@ check = [
     "lint",
     "typecheck",
 ]
+
+test = [
+    { cmd = "cozo-migrate -f cozo.db init" },
+    { cmd = "cozo-migrate -d dummy/migrations create hello -y" },
+    { cmd = "cozo-migrate -f cozo.db -d test/migrations apply -y" },
+    { cmd = "cozo-migrate -f cozo.db status" },
+    { cmd = "cozo-migrate -f cozo.db -d test/migrations apply -ay --down" },
+    { cmd = "cozo-migrate -f cozo.db history" },
+    { cmd = "rm -rf cozo.db dummy/migrations" },
+]

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from typing import Optional
+
 from rich.console import Console
 import typer
 
@@ -16,11 +18,13 @@ def info(msg: str, console=console) -> None:
     console.print(f"[bold blue]•[/bold blue] {msg}")
 
 
-def fail(msg: str, console=error_console) -> None:
+def fail(
+    msg: str, console=error_console, error: Optional[BaseException] = None
+) -> None:
     console.print(f"[bold red]❌[/bold red] {msg}")
     console.print()
 
-    raise typer.Exit(1)
+    raise typer.Exit(1) from error
 
 
 def success(msg: str, console=console) -> None:

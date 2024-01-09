@@ -4,6 +4,7 @@ from typing import Optional
 
 from pycozo.client import Client
 
+from .schema import MANAGER_TABLE_NAME
 from .types import MigrationModule
 from .utils.console import fail, info, warn
 from .utils.fn import paired
@@ -12,10 +13,10 @@ from .utils.fn import paired
 def add_migration(
     client: Client, id: Optional[str], previous_id: Optional[str], created_at: float
 ) -> None:
-    """Add a migration to the migrations_manager table."""
+    """Add a migration to the migrations manager table."""
 
     client.insert(
-        "migrations_manager",
+        MANAGER_TABLE_NAME,
         {
             "created_at": created_at,
             "previous_id": previous_id,
@@ -62,33 +63,34 @@ def apply_migrations(
     down: bool = False,
     _rolling_back: bool = False,
     verbose: bool = False,
-) -> bool:
+    from_cli: bool = True,
+) -> tuple[bool, Optional[Exception]]:
     currently_applied = []
     need_to_roll_back = False
     migration_error = None
-    success = False
 
     for from_, to in paired(migrations):
         try:
             op_name = apply(client, from_, to, down=down)
-            verbose and info(f"Executed `{op_name}`.")
+            from_cli and verbose and info(f"Executed `{op_name}`.")
             currently_applied.append(from_)
         except Exception as e:
             if _rolling_back:
                 # We're already rolling back, so we can't roll back again
                 # Just fail
-                fail(f"Rollback failed: {e}")
+                from_cli and fail(f"Rollback failed: {e}")
+                raise e
 
             migration_error = e
             need_to_roll_back = True
             break
 
     if need_to_roll_back:
-        migration_error and warn(f"Error: {migration_error}")
+        from_cli and migration_error and warn(f"Error: {migration_error}")
 
         # Roll back the migrations that were applied
         # in reverse order
-        warn("Migration failed. Reverting...")
+        from_cli and warn("Migration failed. Reverting...")
 
         apply_migrations(
             client,
@@ -96,10 +98,9 @@ def apply_migrations(
             down=(not down),
             _rolling_back=True,
             verbose=True,
+            from_cli=from_cli,
         )
 
-        success = False
-    else:
-        success = True
+        return (False, migration_error)
 
-    return success
+    return (True, None)

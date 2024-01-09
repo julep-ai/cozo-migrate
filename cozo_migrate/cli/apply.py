@@ -71,11 +71,11 @@ def apply(
             raise typer.Abort()
 
     info("Migrating the database...")
-    applied_successfully = apply_migrations(
-        client, migrations, down=down, verbose=verbose
+    applied_successfully, migration_error = apply_migrations(
+        client, migrations, down=down, verbose=verbose, from_cli=True
     )
 
     if applied_successfully:
         success("Database migrated.")
     else:
-        fail("Migration failed.")
+        fail("Migration failed.", error=migration_error)

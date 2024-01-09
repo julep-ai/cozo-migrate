@@ -4,18 +4,20 @@ from pycozo.client import Client
 
 from .utils.fn import doesnt_throw
 
-check_schema_query = """
-?[id] := *migrations_manager { id }
+MANAGER_TABLE_NAME: str = "cozo_migrate_manager"
+
+check_schema_query = f"""
+?[id] := *{MANAGER_TABLE_NAME} {{ id }}
 :limit 1
 """
 
-create_schema_query = """
-:create migrations_manager {
+create_schema_query = f"""
+:create {MANAGER_TABLE_NAME} {{
     migrated_at_ms: Validity default [floor(now() * 1000), true] =>
     id: String?,
     previous_id: String?,
     created_at: Float?,
-}"""
+}}"""
 
 
 @doesnt_throw

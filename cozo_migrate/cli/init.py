@@ -8,7 +8,7 @@ from .main import app
 
 @app.command()
 def init(ctx: typer.Context):
-    """Initialize the database with the migration history table (under the name `migrations_manager`)."""
+    """Initialize the database with the migration manager table."""
 
     # Validate client
     ctx.obj.validate_options()

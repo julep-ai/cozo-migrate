@@ -5,66 +5,67 @@ from typing import Optional
 import pandas as pd
 from pycozo.client import Client
 
+from .schema import MANAGER_TABLE_NAME
 from .types import Migration
 
-get_first_query = """
+get_first_query = f"""
 ?[
     migrated_at,
     id,
     previous_id,
     created_at,
-] := *migrations_manager {
+] := *{MANAGER_TABLE_NAME} {{
         migrated_at_ms: validity,
         id,
         created_at,
         previous_id,
-    },
+    }},
     migrated_at = to_int(validity) / 1000,
     previous_id = null
 """
 
-get_latest_query = """
+get_latest_query = f"""
 ?[
     migrated_at,
     id,
     previous_id,
     created_at,
-] := *migrations_manager {
+] := *{MANAGER_TABLE_NAME} {{
         migrated_at_ms: validity,
         id,
         created_at,
         previous_id,
         @ "NOW"
-    }, migrated_at = to_int(validity) / 1000
+    }}, migrated_at = to_int(validity) / 1000
 """
 
-get_history_query = """
+get_history_query = f"""
 ?[
     migrated_at,
     id,
     previous_id,
     created_at,
-] := *migrations_manager {
+] := *{MANAGER_TABLE_NAME} {{
         migrated_at_ms: validity,
         id,
         created_at,
         previous_id,
-    }, migrated_at = to_int(validity) / 1000
+    }}, migrated_at = to_int(validity) / 1000
 
 :sort migrated_at
 """
 
-get_migration_path_query = """
+get_migration_path_query = f"""
 edges[
     previous_id,
     id,
-] := *migrations_manager {
+] := *{MANAGER_TABLE_NAME} {{
         id,
         previous_id,
-    }
+    }}
 
 starting[id] <- [[null]]
-latest[id] := *migrations_manager { id @ "NOW" }
+latest[id] := *{MANAGER_TABLE_NAME} {{ id @ "NOW" }}
 
 ?[start, goal, path] <~ ShortestPathBFS(
     edges[from, to],
