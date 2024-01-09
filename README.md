@@ -2,7 +2,47 @@
 
 A simple utility for migrations for cozo db
 
-## Usage
+## Features
+
+- It uses [typer](https://typer.tiangolo.com) and `pycozo` as its only dependencies.
+- Loosely modeled after [hasura-migrate](https://hasura.io/docs/latest/hasura-cli/commands/hasura_migrate/) which is one of the simplest migration tools I have used.
+- Auto-rollback if something goes wrong during the migrations
+- Has a programmatic API for using inside tests etc.
+
+## CLI Usage
+
+#### Example
+
+```bash
+$ # Install cozo-migrate
+$ pip install cozo-migrate
+
+$ # Let's start a cozo server in the background
+$ cozo server -e rocksdb &
+
+$ # Let's create a migration
+$ cozo-migrate -e http -d ./migrations create demo
+  Writing 'migrations/migrate_1704803704_demo.py' Confirm? [y/N]: y
+  ✔ Created migration at: migrations/migrate_1704803704_demo.py
+
+$ cat migrations/migrate_1704803704_demo.py
+  #/usr/bin/env python3
+  
+  MIGRATION_ID = "demo"
+  CREATED_AT = 1704803704.762879
+  
+  def up(client):
+      pass
+  
+  def down(client):
+      pass
+
+$ # Edit the migration to add schema change queries and then apply!
+$ cozo-migrate -e http -d ./migrations apply -a
+  • Migrate path: [NONE] → demo
+  Are you sure you want to apply these migrations? [y/N]: y
+  ✔ Database migrated.
+```
 
 #### Core options
 
@@ -100,4 +140,23 @@ A simple utility for migrations for cozo db
 ╭─ Options ────────────────────────────────────╮
 │ --help          Show this message and exit.  │
 ╰──────────────────────────────────────────────╯
+```
+
+## API Usage
+
+```python
+from cozo_migrate.api import init, apply
+from pycozo import Client
+
+migrations_dir: str = "./migrations"
+
+# Create a new client for testing
+# and initialize the schema.
+client = Client()
+
+# Initialize the migration schema
+init(client)
+
+# Apply migrations from the migration directory
+apply(client, migrations_dir=migrations_dir, all_=True)
 ```
