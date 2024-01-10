@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import time
 from typing import Optional
 
 from pycozo.client import Client
@@ -15,6 +16,7 @@ def add_migration(
 ) -> None:
     """Add a migration to the migrations manager table."""
 
+    time.sleep(0.01)  # Ensure that the migrated_at is unique
     client.insert(
         MANAGER_TABLE_NAME,
         {
