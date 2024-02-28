@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cozo-migrate"
-version = "0.2.2"
+version = "0.2.3"
 description = "A simple utility for migrations for cozo db"
 authors = ["Diwank Singh Tomer <diwank.singh@gmail.com>"]
 license = "MIT"
@@ -8,9 +8,14 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-typer = {extras = ["all"], version = "^0.9.0"}
-rich = "^13.7.0"
-pycozo = {extras = ["embedded", "pandas", "requests"], version = "^0.7.6"}
+typer = ">=0.9.0"
+rich = ">=13.0.0,<14.0.0"
+pycozo = "^0.7.6"
+colorama = ">=0.4.0,<0.6.0"
+shellingham = ">=1.4.0,<2.0.0"
+pandas = ">=2.0.0,<2.5.0"
+cozo-embedded = "^0.7.6"
+requests = ">=2.0.0,<3.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
