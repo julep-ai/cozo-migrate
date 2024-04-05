@@ -99,3 +99,18 @@ def get_latest_migration(client: Client) -> Optional[Migration]:
 def get_first_migration(client: Client) -> Optional[Migration]:
     migration = Migration.get_first(client.run(get_first_query))
     return migration
+
+
+def get_current_schema(client: Client) -> pd.DataFrame:
+    all_relations = client.run("::relations")
+    normal_relations = all_relations[all_relations["access_level"] != "index"][
+        ["name", "description"]
+    ]
+
+    relation_wise_columns = {
+        relation: client.run(f"::columns {relation}").drop("index", axis=1)
+        for relation in normal_relations["name"]
+        if relation != MANAGER_TABLE_NAME
+    }
+
+    return relation_wise_columns
