@@ -27,13 +27,13 @@ $ cozo-migrate -e http -d ./migrations create demo
 
 $ cat migrations/migrate_1704803704_demo.py
   #/usr/bin/env python3
-  
+
   MIGRATION_ID = "demo"
   CREATED_AT = 1704803704.762879
-  
+
   def up(client):
       pass
-  
+
   def down(client):
       pass
 
@@ -116,6 +116,18 @@ $ cozo-migrate -e http -d ./migrations apply -a
 │ --yes   -y                                     │
 │ --help            Show this message and exit.  │
 ╰────────────────────────────────────────────────╯
+```
+
+#### Show
+
+```bash
+ Usage: cozo-migrate show
+
+ Show the current schema in the database.
+
+╭─ Options ────────────────────────────────────╮
+│ --help          Show this message and exit.  │
+╰──────────────────────────────────────────────╯
 ```
 
 #### Status
