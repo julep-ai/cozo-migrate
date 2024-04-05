@@ -20,6 +20,7 @@ def apply(
     down: Annotated[bool, typer.Option("--down")] = False,
     all_: Annotated[bool, typer.Option("--all", "-a")] = False,
     confirm: Annotated[bool, typer.Option("--yes", "-y")] = False,
+    compact: Annotated[bool, typer.Option("--compact")] = False,
 ):
     """
     Apply migrations to the database.
@@ -74,6 +75,10 @@ def apply(
     applied_successfully, migration_error = apply_migrations(
         client, migrations, down=down, verbose=verbose, from_cli=True
     )
+
+    if compact:
+        client.run("::compact")
+        info("Database compaction initiated.")
 
     if applied_successfully:
         success("Database migrated.")
